@@ -214,5 +214,55 @@ if(function_exists("register_field_group"))
 }
 
 
+/**
+* Enqueue css for WZ-Distributor shortcode page.
+* CSS for feel good.
+* CSS Bootstrap 4
+*/
+add_action( 'wp_enqueue_scripts', 'wz_distributor_scripts' );
+function wz_distributor_scripts() {
+	if(!is_admin()) {
+        wp_enqueue_style( 'wz-distributor-bootstrap', plugin_dir_url( __FILE__ ) . '/vendor/bootstrap-4/css/bootstrap-grid.min.css' , array() );
+        wp_enqueue_style( 'wz-distributor', plugin_dir_url( __FILE__ ) . 'wz-distributor.css' , array() );
+    }
+}
+
+// Function shortcode to add Distributor list grid
+function wz_distributor_shortcode() {?>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-4 col-6 align-items-center justify-content-between text-center wz-col">
+                <img src="/wp-content/plugins/wz-distributor/img/wz-not-img.png" class="img-fluid rounded mx-auto d-block wz-img" alt="">
+                <h6 class="wz-name">Medileen Skincare by Kade</h6>
+                <h6 class="wz-id">EX013</h6>
+                <ul>
+                    <li>
+                        <a href="">
+                            <img class="wz-social" src="/wp-content/plugins/wz-distributor/img/icon256.png" alt="Line">
+                        </a>        
+                    </li>
+                    <li>
+                        <a href="">
+                            <img class="wz-social" src="/wp-content/plugins/wz-distributor/img/inst.png" alt="Instragran">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="">
+                            <img class="wz-social" src="/wp-content/plugins/wz-distributor/img/icon-facebook.png" alt="Facebook">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="">
+                            <img class="wz-social" src="/wp-content/plugins/wz-distributor/img/web.png" alt="Website">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+<?php }
+add_shortcode('wz-distributor', 'wz_distributor_shortcode');
 
 ?>
