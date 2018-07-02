@@ -1,0 +1,44 @@
+/*
+Plugin Name: WZ Distributor
+Plugin URI: https://walnutztudio.com
+Description: Create list Distributor contact page for wordpress, with shortcode.
+Version: 1.0
+Author: WalnutZtudio
+Author URI: https://walnutztudio.com
+License: GPL2
+Text Domain: wz-distributor
+*/
+
+/* Extra small devices (portrait phones, less than 576px)
+*  No media query for `xs` since this is the default in Bootstrap*/
+
+/* Small devices (landscape phones, 576px and up)*/
+@media (min-width: 576px) { }
+
+/* Medium devices (tablets, 768px and up)*/
+@media (min-width: 768px) { }
+
+/* Large devices (desktops, 992px and up)*/
+@media (min-width: 992px) { }
+
+/* Extra large devices (large desktops, 1200px and up)*/
+@media (min-width: 1200px) { }
+
+.wz-col{
+    padding: 15px;
+}
+
+.wz-col ul{
+    padding-left: 0px;
+}
+
+.wz-col li{
+    list-style: none;
+    width: 17%;
+    float: left;
+    margin: 0 4%;
+}
+
+h2 {
+    font-size: 3em;
+}
