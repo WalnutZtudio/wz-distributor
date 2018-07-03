@@ -11,3 +11,5 @@ Create list Distributor contact page for wordpress, with shortcode.
 * Add Shortcode for Distributor
 * Add css for responsive grid
 * Add Setting menu
+* Add page for distributor
+* Clean code
