@@ -14,11 +14,11 @@ Text Domain: wz-distributor
 Copyright 2018 WalnutZtudio  (email : walnutztudio@gmail.com)
 */
 
-/* Add Post Type Distributor */
+/* Include file setting page. */
+require_once( dirname( __FILE__ ) . '/wz-distributor-setting.php' );
+
+/* Add Post Type: Distributors. */
 function cptui_register_my_cpts() {
-	/**
-	 * Post Type: Distributors.
-	 */
 	$labels = array(
 		"name" => __( "Distributors"),
 		"singular_name" => __( "Distributor"),
@@ -50,7 +50,7 @@ function cptui_register_my_cpts() {
 		"labels" => $labels,
 		"description" => "Create list Distributor contact page for wordpress.",
 		"public" => true,
-		"publicly_queryable" => true,
+		"publicly_queryable" => false,
 		"show_ui" => true,
 		"show_in_rest" => false,
 		"rest_base" => "",
@@ -72,11 +72,8 @@ function cptui_register_my_cpts() {
 add_action( 'init', 'cptui_register_my_cpts' );
 
 
-/* Add Taxonomy Role for Distributor */
+/* Add Taxonomy: Role for Distributor 
 function cptui_register_my_taxes() {
-	/**
-	 * Taxonomy: Role.
-	 */
 	$labels = array(
 		"name" => __( "Role"),
 		"singular_name" => __( "Role"),
@@ -116,10 +113,12 @@ function cptui_register_my_taxes() {
 	register_taxonomy( "role_member", array( "wz_distributor" ), $args );
 }
 add_action( 'init', 'cptui_register_my_taxes' );
+*/
 
 
-/* Add custom field */
+/* Add custom field to Distributor post type */
 require_once( dirname( __FILE__ ) . '/vendor/advanced-custom-fields/acf.php');
+define( 'ACF_LITE', true );
 if(function_exists("register_field_group"))
 {
 	register_field_group(array (
@@ -213,11 +212,53 @@ if(function_exists("register_field_group"))
 	));
 }
 
+/*
+ * Add custom field to admin column
+ */
+function add_acf_columns( $columns ) {
+ 	$column_id = array( 'distributor_id' => 'ID' );
+    $columns = array_slice( $columns, 0, 2, true ) + $column_id + array_slice( $columns, 1, NULL, true );
+    
+    $column_thumbs = array( the_post_thumbnail() => 'Image Distributor' );
+	$columns = array_slice( $columns, 0, 3, true ) + $column_thumbs + array_slice( $columns, 1, NULL, true );
+	
+	return $columns;
+}
+add_filter ( 'manage_wz_distributor_posts_columns', 'add_acf_columns', 10, 1 );
+
+/*
+ * Add data custom field to admin column
+ */
+function exhibition_custom_column ( $column, $post_id ) {
+    switch ( $column ) {
+      case 'distributor_id':
+        echo get_post_meta ( $post_id, 'distributor_id', true );
+        break;
+      case the_post_thumbnail( array(100, 100)):
+        echo get_post_meta ( $post_id, 'featured-thumbnail', true );
+        break;
+    }
+}
+add_action ( 'manage_wz_distributor_posts_custom_column', 'exhibition_custom_column', 10, 2 );
+
+/*
+ * Remove Date in admin cloumn
+ */
+function my_manage_columns( $columns ) {
+    unset($columns['date']);
+    return $columns;
+}
+function my_column_init() {
+    add_filter( 'manage_wz_distributor_posts_columns' , 'my_manage_columns' );
+}
+add_action( 'admin_init' , 'my_column_init' );
+
 
 /**
-* Enqueue css for WZ-Distributor shortcode page.
-* CSS for feel good.
+* Enqueue css and javascript for WZ Distributor.
+* CSS for Distributor page.
 * CSS Bootstrap 4
+* Javascript for copy shortcode in admin page.
 */
 add_action( 'wp_enqueue_scripts', 'wz_distributor_scripts' );
 function wz_distributor_scripts() {
@@ -227,41 +268,71 @@ function wz_distributor_scripts() {
     }
 }
 
+/**
+* Enqueue javascript for settings on admin page.
+*/
+add_action( 'admin_enqueue_scripts', 'wz_distributor_admin_scripts' );
+
+function wz_distributor_admin_scripts() {
+	if(is_admin()){
+        wp_enqueue_style( 'wz-distributor', plugin_dir_url( __FILE__ ) . 'wz-distributor-admin.css' , array() );
+        wp_enqueue_script( 'wz-distributor', plugin_dir_url( __FILE__ ) . 'wz-distributor-admin.js' , array('jquery'), '2018-1', true );
+	}
+}
+
 // Function shortcode to add Distributor list grid
 function wz_distributor_shortcode() {?>
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-3 col-md-4 col-6 align-items-center justify-content-between text-center wz-col">
-                <img src="/wp-content/plugins/wz-distributor/img/wz-not-img.png" class="img-fluid rounded mx-auto d-block wz-img" alt="">
-                <h6 class="wz-name">Medileen Skincare by Kade</h6>
-                <h6 class="wz-id">EX013</h6>
-                <ul>
-                    <li>
-                        <a href="">
-                            <img class="wz-social" src="/wp-content/plugins/wz-distributor/img/icon256.png" alt="Line">
-                        </a>        
-                    </li>
-                    <li>
-                        <a href="">
-                            <img class="wz-social" src="/wp-content/plugins/wz-distributor/img/inst.png" alt="Instragran">
-                        </a>
-                    </li>
-                    <li>
-                        <a href="">
-                            <img class="wz-social" src="/wp-content/plugins/wz-distributor/img/icon-facebook.png" alt="Facebook">
-                        </a>
-                    </li>
-                    <li>
-                        <a href="">
-                            <img class="wz-social" src="/wp-content/plugins/wz-distributor/img/web.png" alt="Website">
-                        </a>
-                    </li>
-                </ul>
+    <?php $paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
+
+        $distributor = new WP_Query(array(
+            'post_type' => 'wz_distributor',
+            'orderby' => 'rand',
+            'posts_per_page' => -1,
+            'paged' => $paged,
+            'page' => $paged,
+            /*'tax_query' => array(
+                    array(
+                        'taxonomy' => 'role_member',
+                        'field' => 'slug',
+                        'terms' => '*'
+                    ),
+                ),*/
+        )); ?>
+
+    <?php if ($distributor -> have_posts() ): ?>
+        <div class="container-fluid">
+            <div class="row">
+                <?php while($distributor->have_posts()) : $distributor->the_post(); ?>
+                    <div class="col-lg-3 col-md-4 col-6 align-items-center justify-content-between text-center wz-col">
+                        <?php if(has_post_thumbnail()) { 
+                           the_post_thumbnail( 'full', array( 'alt' => get_the_title() ) );
+                        } 
+                        else 
+                            { echo '<img class="img-fluid rounded mx-auto d-block wz-img" src="/wp-content/plugins/wz-distributor/img/wz-not-img.png" alt="'. get_the_title() .'" />'; }
+                        ?>
+                        <h6 class="wz-name"><?php the_title(); ?></h6>
+                        <h6 class="wz-id"><?php the_field('distributor_id'); ?></h6>
+                        <ul>
+                            <li><a href="<?php the_field('line'); ?>"><img class="wz-social" src="/wp-content/plugins/wz-distributor/img/icon256.png" alt="Line"></a></li>
+                            <li><a href="<?php the_field('instragram'); ?>"><img class="wz-social" src="/wp-content/plugins/wz-distributor/img/inst.png" alt="Instragran"></a></li>
+                            <li><a href="<?php the_field('facebook'); ?>"><img class="wz-social" src="/wp-content/plugins/wz-distributor/img/icon-facebook.png" alt="Facebook"></a></li>
+                            <li><a href="<?php the_field('website'); ?>"><img class="wz-social" src="/wp-content/plugins/wz-distributor/img/web.png" alt="Website"></a></li>
+                        </ul>
+                    </div>
+                <?php endwhile; ?>
             </div>
         </div>
-    </div>
+    <!--?php
+        if (function_exists(custom_pagination)) {
+            custom_pagination($distributor->max_num_pages,"",$paged);
+        }
+    ?-->
+    <?php wp_reset_postdata(); ?>
 
+    <?php else : ?>
+        <p>You not have member</p>
+    <?php endif ; ?>
 <?php }
 add_shortcode('wz-distributor', 'wz_distributor_shortcode');
 
