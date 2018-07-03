@@ -87,30 +87,54 @@ function wz_distributor_admin_scripts() {
 
 // Function shortcode to add Distributor list grid
 add_shortcode('wz-distributor', 'wz_distributor_shortcode');
-function wz_distributor_shortcode() {?>
+function wz_distributor_shortcode( $atts) {?>
 
     <?php $paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
         // get all terms in the taxonomy
         $terms = get_terms( 'role_member' ); 
         // convert array of term objects to array of term IDs
         $term_ids = wp_list_pluck( $terms, 'term_id' );
+        
+        if ($atts !== '' ){
+            $atts = shortcode_atts(
+                array(
+                    'category' => 'new-member',
+                ), $atts, 'wz-distributor' );
+    
+            $atts = $atts['category'];
 
-        $args = array(
-            'post_type' => 'wz_distributor',
-            'orderby' => 'rand',
-            'posts_per_page' => -1,
-            'paged' => $paged,
-            'page' => $paged,
-            'tax_query' => array(
-                    array(
-                        'taxonomy' => 'role_member',
-                        'field' => 'term_id',
-                        'terms' => $term_ids,
+            $args = array(
+                'post_type' => 'wz_distributor',
+                'orderby' => 'rand',
+                'posts_per_page' => -1,
+                'paged' => $paged,
+                'page' => $paged,
+                'tax_query' => array(
+                        array(
+                            'taxonomy' => 'role_member',
+                            'field' => 'slug',
+                            'terms' => $atts,
+                        ),
                     ),
-                ),
-        );
-        $distributor = new WP_Query($args);
-        ?>
+            );
+        }
+        else {
+            $args = array(
+                'post_type' => 'wz_distributor',
+                'orderby' => 'rand',
+                'posts_per_page' => -1,
+                'paged' => $paged,
+                'page' => $paged,
+                'tax_query' => array(
+                        array(
+                            'taxonomy' => 'role_member',
+                            'field' => 'term_id',
+                            'terms' => $term_ids,
+                        ),
+                    ),
+            );
+        }
+        $distributor = new WP_Query($args);?>
 
     <?php if ($distributor -> have_posts() ): ?>
         <div class="container-fluid">
