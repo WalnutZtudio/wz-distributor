@@ -16,6 +16,7 @@ Copyright 2018 WalnutZtudio  (email : walnutztudio@gmail.com)
 
 /* Include file setting page. */
 require_once( dirname( __FILE__ ) . '/wz-distributor-setting.php' );
+
 /* Add Post Type: Distributors. */
 function cptui_register_my_cpts() {
 	$labels = array(
