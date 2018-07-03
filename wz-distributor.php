@@ -147,7 +147,7 @@ function snb_activate_au()
 	{
 		// set auto-update params
 		$plugin_current_version = '1.0.0';
-		$plugin_remote_path     = 'http://center.walnutztudio.com/plugin-update/wz-distributor/update.php';
+		$plugin_remote_path     = 'https://center.walnutztudio.com/plugin-update/wz-distributor/update.php';
 		$plugin_slug            = plugin_basename(__FILE__);
 		$license_user           = '<optional license username>';
 		$license_key            = '<optional license key>';
