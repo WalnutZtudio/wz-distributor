@@ -3,7 +3,7 @@
 Plugin Name: WZ Distributor
 Plugin URI: https://walnutztudio.com
 Description: Create list Distributor contact page for wordpress, with shortcode.
-Version: 1.0.0
+Version: 1.1.0
 Author: WalnutZtudio
 Author URI: https://walnutztudio.com
 License: GPL2
@@ -90,21 +90,27 @@ add_shortcode('wz-distributor', 'wz_distributor_shortcode');
 function wz_distributor_shortcode() {?>
 
     <?php $paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
+        // get all terms in the taxonomy
+        $terms = get_terms( 'role_member' ); 
+        // convert array of term objects to array of term IDs
+        $term_ids = wp_list_pluck( $terms, 'term_id' );
 
-        $distributor = new WP_Query(array(
+        $args = array(
             'post_type' => 'wz_distributor',
             'orderby' => 'rand',
             'posts_per_page' => -1,
             'paged' => $paged,
             'page' => $paged,
-            /*'tax_query' => array(
+            'tax_query' => array(
                     array(
                         'taxonomy' => 'role_member',
-                        'field' => 'slug',
-                        'terms' => '*'
+                        'field' => 'term_id',
+                        'terms' => $term_ids,
                     ),
-                ),*/
-        )); ?>
+                ),
+        );
+        $distributor = new WP_Query($args);
+        ?>
 
     <?php if ($distributor -> have_posts() ): ?>
         <div class="container-fluid">
@@ -115,15 +121,15 @@ function wz_distributor_shortcode() {?>
                            the_post_thumbnail( 'full', array( 'alt' => get_the_title() ) );
                         } 
                         else 
-                            { echo '<img class="img-fluid rounded mx-auto d-block wz-img" src="/wp-content/plugins/wz-distributor/img/wz-not-img.png" alt="'. get_the_title() .'" />'; }
+                            { echo '<img class="img-fluid rounded mx-auto d-block wz-img" src="'.plugin_dir_url( __FILE__ ) .'/img/wz-not-img.png" alt="'. get_the_title() .'" />'; }
                         ?>
                         <h6 class="wz-name"><?php the_title(); ?></h6>
                         <h6 class="wz-id"><?php the_field('distributor_id'); ?></h6>
                         <ul>
-                            <li><a href="<?php the_field('line'); ?>"><img class="wz-social" src="/wp-content/plugins/wz-distributor/img/icon256.png" alt="Line"></a></li>
-                            <li><a href="<?php the_field('instragram'); ?>"><img class="wz-social" src="/wp-content/plugins/wz-distributor/img/inst.png" alt="Instragran"></a></li>
-                            <li><a href="<?php the_field('facebook'); ?>"><img class="wz-social" src="/wp-content/plugins/wz-distributor/img/icon-facebook.png" alt="Facebook"></a></li>
-                            <li><a href="<?php the_field('website'); ?>"><img class="wz-social" src="/wp-content/plugins/wz-distributor/img/web.png" alt="Website"></a></li>
+                            <li><a href="<?php the_field('line'); ?>"><img class="wz-social" src="<?php echo plugin_dir_url( __FILE__ ) ?>/img/icon256.png" alt="Line"></a></li>
+                            <li><a href="<?php the_field('instragram'); ?>"><img class="wz-social" src="<?php echo plugin_dir_url( __FILE__ ) ?>/img/inst.png" alt="Instragran"></a></li>
+                            <li><a href="<?php the_field('facebook'); ?>"><img class="wz-social" src="<?php echo plugin_dir_url( __FILE__ ) ?>/img/icon-facebook.png" alt="Facebook"></a></li>
+                            <li><a href="<?php the_field('website'); ?>"><img class="wz-social" src="<?php echo plugin_dir_url( __FILE__ ) ?>/img/web.png" alt="Website"></a></li>
                         </ul>
                     </div>
                 <?php endwhile; ?>
@@ -141,6 +147,8 @@ function wz_distributor_shortcode() {?>
 	<?php endif ; 
 } ?>
 <?php
+
+
 // Update plugin function
 require_once( dirname( __FILE__ ) . '/vendor/update/wp_autoupdate.php' );
 function snb_activate_au()
@@ -170,7 +178,7 @@ if(!class_exists('WZ_Distributor')) {
 
 		/* Activate the plugin */
 		public static function activate() {
-			/* Add Default payment-confirm page. */
+			/* Add Default Distributor page. */
 			$page = get_page_by_path('distributor');
 			if (!is_object($page)) {
 				global $user_ID;
