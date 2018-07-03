@@ -39,6 +39,14 @@ Text Domain: wz-distributor
     margin: 0 4%;
 }
 
+.wz-name, .wz-id{
+    text-align: center;
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 0;
+}
+
 h2 {
     font-size: 3em;
 }
