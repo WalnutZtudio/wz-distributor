@@ -54,7 +54,7 @@ function cptui_register_my_cpts() {
 }
 
 
-/* Add Taxonomy: Role for Distributor 
+/* Add Taxonomy: Role for Distributor */
 add_action( 'init', 'cptui_register_my_taxes' );
 function cptui_register_my_taxes() {
 	$labels = array(
@@ -95,8 +95,47 @@ function cptui_register_my_taxes() {
 	);
 	register_taxonomy( "role_member", array( "wz_distributor" ), $args );
 }
-*/
 
+
+/* Add Default Terms: new member for Distributor */
+add_action( 'init', 'register_new_terms' );
+function register_new_terms() {
+	$taxonomy = 'role_member';
+	$terms = array (
+		'0' => array (
+			'name'          => 'New Member',
+			'slug'          => 'new-member',
+			'description'   => 'New member level',
+		),
+	);
+	foreach ( $terms as $term_key=>$term) {
+			wp_insert_term(
+				$term['name'],
+				$taxonomy, 
+				array(
+					'description'   => $term['description'],
+					'slug'          => $term['slug'],
+				)
+			);
+		unset( $term ); 
+	}
+}
+
+function set_default_object_terms( $post_id, $post ) {
+	if ( 'publish' === $post->post_status && $post->post_type === 'wz_distributor' ) {
+		$defaults = array(
+			'role_member' => array( 'new-member' )
+			);
+		$taxonomies = get_object_taxonomies( $post->post_type );
+		foreach ( (array) $taxonomies as $taxonomy ) {
+			$terms = wp_get_post_terms( $post_id, $taxonomy );
+			if ( empty( $terms ) && array_key_exists( $taxonomy, $defaults ) ) {
+				wp_set_object_terms( $post_id, $defaults[$taxonomy], $taxonomy );
+			}
+		}
+	}
+}
+add_action( 'save_post', 'set_default_object_terms', 0, 2 );
 
 /* Add custom field to Distributor post type */
 require_once( dirname( __FILE__ ) . '/vendor/advanced-custom-fields/acf.php');

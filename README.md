@@ -7,6 +7,8 @@ Create list Distributor contact page for wordpress, with shortcode.
 
 ### 1.1.0
 * Auto update Functions.
+* Add Taxonomy default
+* Auto select Taxonomy default
 
 ### 1.0.0
 * Add Post Type Distributors

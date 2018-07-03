@@ -1,6 +1,8 @@
 <?php
-//Example from Codex page : http://codex.wordpress.org/Function_Reference/add_submenu_page
-
+/**
+* Add submenu for distributor.
+* Example from Codex page : http://codex.wordpress.org/Function_Reference/add_submenu_page
+*/
 add_action('admin_menu', 'wz_register_distributor_setting_page');
 function wz_register_distributor_setting_page() {
     $capabilities = 'manage_options';
@@ -72,7 +74,7 @@ function wz_distributor_setting_page_callback() {
             <?php } ?>
             <!-- License tab -->
             <?php if($nav_tab_active == 'license'){ 
-                $license = get_option( 'wz_distributor_license_key' );
+                $license_key = get_option( 'wz_distributor_license_key' );
                 $status  = get_option( 'wz_distributor_license_status' );
             ?>
                 <h2 class="title"><?php _e('License', 'wz-distributor');?></h2>
@@ -84,11 +86,11 @@ function wz_distributor_setting_page_callback() {
                                 <?php _e('License Key', 'wz-distributor'); ?>
                             </th>
                             <td>
-                                <input id="wz_distributorlicense_key" name="wz_distributor_license_key" type="text" class="regular-text" value="<?php esc_attr_e( $license ); ?>" />
+                                <input id="wz_distributorlicense_key" name="wz_distributor_license_key" type="text" class="regular-text" value="<?php esc_attr_e( $license_key ); ?>" />
                                 <label class="description" for="wz_distributor_license_key"><?php _e('Enter your license key', 'wz-distributor'); ?></label>
                             </td>
                         </tr>
-                        <?php if( false !== $license ) { ?>
+                        <?php if( false !== $license_key ) { ?>
                         <tr valign="top">
                             <th scope="row" valign="top">
                                 <?php _e('Activate License', 'wz-distributor'); ?>
@@ -114,5 +116,38 @@ function wz_distributor_setting_page_callback() {
         </form>
     </div>
     <?php
+}
+
+
+/**
+* Save settings into database.
+*/
+add_action('init', 'wz_distributor_save_settings');
+function wz_distributor_save_settings(){
+
+	if(isset($_POST['_wpnonce']) && wp_verify_nonce($_POST['_wpnonce'], 'wz-distributor')){
+
+		/* Settings tab activate. */
+		if(!isset($_GET['tab']) || $_GET['tab'] == '' || $_GET['tab'] == 'settings'){
+
+
+			$_SESSION['saved'] = 'true';
+		}
+
+		/* License tab activate */
+		if(isset($_GET['tab']) && $_GET['tab'] == 'license'){
+			/* Check to see if user change new license. */
+			$old = get_option( 'wz_distributor_license_key' );
+
+			if( $old && $old != $_POST['wz_distributor_license_key'] ) {
+				/* new license has been entered, so must reactivate */
+				delete_option( 'wz_distributor_license_status' );
+			}
+
+			update_option( 'wz_distributor_license_key', $_POST['wz_distributor_license_key'] );
+
+			$_SESSION['saved'] = 'true';
+		}
+	}
 }
 ?>
