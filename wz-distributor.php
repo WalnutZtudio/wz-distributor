@@ -150,8 +150,8 @@ function wz_distributor_shortcode( $atts) {?>
                         <h6 class="wz-name"><?php the_title(); ?></h6>
                         <h6 class="wz-id"><?php the_field('distributor_id'); ?></h6>
                         <ul>
-                            <li><a href="<?php the_field('line'); ?>"><img class="wz-social" src="<?php echo plugin_dir_url( __FILE__ ) ?>/img/icon256.png" alt="Line"></a></li>
-                            <li><a href="<?php the_field('instragram'); ?>"><img class="wz-social" src="<?php echo plugin_dir_url( __FILE__ ) ?>/img/inst.png" alt="Instragran"></a></li>
+                            <li><a href="<?php the_field('line'); ?>"><img class="wz-social" src="<?php echo plugin_dir_url( __FILE__ ) ?>/img/line-512.png" alt="Line"></a></li>
+                            <li><a href="<?php the_field('instragram'); ?>"><img class="wz-social" src="<?php echo plugin_dir_url( __FILE__ ) ?>/img/icon-instagram.png" alt="Instragran"></a></li>
                             <li><a href="<?php the_field('facebook'); ?>"><img class="wz-social" src="<?php echo plugin_dir_url( __FILE__ ) ?>/img/icon-facebook.png" alt="Facebook"></a></li>
                             <li><a href="<?php the_field('website'); ?>"><img class="wz-social" src="<?php echo plugin_dir_url( __FILE__ ) ?>/img/web.png" alt="Website"></a></li>
                         </ul>
