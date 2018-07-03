@@ -3,7 +3,7 @@
 Plugin Name: WZ Distributor
 Plugin URI: https://walnutztudio.com
 Description: Create list Distributor contact page for wordpress, with shortcode.
-Version: 1.0
+Version: 1.0.0
 Author: WalnutZtudio
 Author URI: https://walnutztudio.com
 License: GPL2
@@ -141,6 +141,26 @@ function wz_distributor_shortcode() {?>
 	<?php endif ; 
 } ?>
 <?php
+// Update plugin function
+require_once( dirname( __FILE__ ) . '/vendor/update/wp_autoupdate.php' );
+function snb_activate_au()
+	{
+		// set auto-update params
+		$plugin_current_version = '1.0.0';
+		$plugin_remote_path     = 'https://raw.githubusercontent.com/nuttaruj/wz-distributor/master/vendor/update/update.php';
+		$plugin_slug            = plugin_basename(__FILE__);
+		$license_user           = '<optional license username>';
+		$license_key            = '<optional license key>';
+
+		// only perform Auto-Update call if a license_user and license_key is given
+		if ( $license_user && $license_key && $plugin_remote_path )
+		{
+			new wp_autoupdate ($plugin_current_version, $plugin_remote_path, $plugin_slug, $license_user, $license_key);
+		}
+	}
+add_action('init', 'snb_activate_au');
+
+
 if(!class_exists('WZ_Distributor')) {
 	class WZ_Distributor {
 		/* Construct the plugin object */

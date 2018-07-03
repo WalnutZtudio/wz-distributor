@@ -5,7 +5,10 @@ Create list Distributor contact page for wordpress, with shortcode.
 
 ## Change Log
 
-### 1.0
+### 1.1.0
+* Auto update Functions.
+
+### 1.0.0
 * Add Post Type Distributors
 * Add custom field for Post Type Distributors
 * Add Shortcode for Distributor
