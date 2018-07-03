@@ -9,6 +9,7 @@ Create list Distributor contact page for wordpress, with shortcode.
 * Auto update Functions.
 * Add Taxonomy default
 * Auto select Taxonomy default
+* Can use Taxonomy in shortcode "[wz-distributor category="new-member"]"
 
 ### 1.0.0
 * Add Post Type Distributors
