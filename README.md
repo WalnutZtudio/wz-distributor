@@ -1,5 +1,6 @@
 WZ Distributor
 ===
+Wordpress Plugin
 
 Create list Distributor contact page for wordpress, with shortcode.
 
