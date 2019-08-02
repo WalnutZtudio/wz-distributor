@@ -88,7 +88,7 @@ function wz_distributor_admin_scripts() {
 // Function shortcode to add Distributor list grid
 add_shortcode('wz-distributor', 'wz_distributor_shortcode');
 function wz_distributor_shortcode( $atts) {?>
-
+	ob_start();
     <?php $paged = ( get_query_var('paged') ) ? get_query_var('paged') : 1;
         // get all terms in the taxonomy
         $terms = get_terms( 'role_member' ); 
@@ -169,6 +169,7 @@ function wz_distributor_shortcode( $atts) {?>
     <?php else : ?>
         <p>You not have member</p>
 	<?php endif ; 
+return ob_get_clean();
 } ?>
 <?php
 
